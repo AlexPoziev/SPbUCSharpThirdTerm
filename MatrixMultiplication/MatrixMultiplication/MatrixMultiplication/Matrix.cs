@@ -50,7 +50,7 @@ public class Matrix
                 throw new InvalidDataException();
             }
 
-            for (int j = 0; i < line.Length; ++j)
+            for (int j = 0; j < line.Length; ++j)
             {
                 MatrixArray[i,j] = line[j];
             }
@@ -62,15 +62,15 @@ public class Matrix
         MatrixArray = matrix;
     }
 
-    public Matrix((int rowSize, int columnSize) size)
+    public Matrix(int rowSize, int columnSize)
     {
         var random = new Random();
 
-        MatrixArray = new int[size.rowSize, size.columnSize];
+        MatrixArray = new int[rowSize, columnSize];
 
-        for (int i = 0; i < size.rowSize; ++i)
+        for (int i = 0; i < rowSize; ++i)
         {
-            for (int j = 0; j < size.columnSize; ++j)
+            for (int j = 0; j < columnSize; ++j)
             {
                 MatrixArray[i, j] = random.Next(1024);
             }
