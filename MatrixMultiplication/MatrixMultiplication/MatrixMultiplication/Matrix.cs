@@ -23,7 +23,12 @@ public class Matrix
 
         for (var i = 0; i < lines.Length; ++i)
         {
-            var line = lines[i].Split(' ').Select(int.Parse).ToArray();
+            if (lines[i] == string.Empty)
+            {
+                throw new InvalidDataException("Empty line");
+            }
+            
+            var line = lines[i].Trim().Split(' ').Select(int.Parse).ToArray();
 
             if (line.Length != matrixArray.GetLength(1))
             {
@@ -105,5 +110,32 @@ public class Matrix
 
             writer.Write(Environment.NewLine);
         }
+    }
+
+    /// <summary>
+    /// Method to check is two matrices equal.
+    /// </summary>
+    /// <param name="matrix"></param>
+    public bool IsEqual(Matrix matrix)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+
+        if (Size.row != matrix.Size.row || Size.column != matrix.Size.column)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < Size.row; ++i)
+        {
+            for (var j = 0; j < Size.column; ++j)
+            {
+                if (matrixArray[i, j] != matrix[i, j])
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
