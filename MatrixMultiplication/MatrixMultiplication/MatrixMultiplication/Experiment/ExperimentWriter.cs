@@ -2,7 +2,9 @@
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
-using iText.Layout.Properties;
+using IronSoftware.Drawing;
+using PdfDocument = iText.Kernel.Pdf.PdfDocument;
+using TextAlignment = iText.Layout.Properties.TextAlignment;
 
 namespace MatrixMultiplication.Experiment;
 
@@ -71,5 +73,11 @@ public static class ExperimentWriter
         document.Add(table);
 
         document.Close();
+
+        var newPdf = IronPdf.PdfDocument.FromFile("test.pdf");
+
+        newPdf.RasterizeToImageFiles("result.png");
+        
+        File.Delete("test.pdf");
     }
 }

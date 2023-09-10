@@ -39,6 +39,7 @@ public static class MatrixOperations
 
     /// <summary>
     /// Method that perform parallel matrix multiplication.
+    /// With using blocks to use already saved cache.
     /// </summary>
     /// <returns>Matrix that is the result of multiplication.</returns>
     /// <exception cref="InvalidDataException">Incorrect size of matrices.</exception>
