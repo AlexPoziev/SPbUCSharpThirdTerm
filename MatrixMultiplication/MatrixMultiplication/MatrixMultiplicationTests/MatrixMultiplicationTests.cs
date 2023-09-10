@@ -20,6 +20,6 @@ public class MatrixMultiplicationTests
     [Test]
     public void NotRectangleMatrixShouldThrowInvalidDataException()
     {
-        Assert.Throws<InvalidDataException>(() => new Matrix("../../../)"));
+        Assert.Throws<InvalidDataException>(() => new Matrix("../../../TestsFiles/FailMatrix.txt"));
     }
 }
