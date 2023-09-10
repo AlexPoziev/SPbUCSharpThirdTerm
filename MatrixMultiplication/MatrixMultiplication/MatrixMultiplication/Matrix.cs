@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace MatrixMultiplication.Models;
+﻿namespace MatrixMultiplication.Models;
 
 public class Matrix
 {
@@ -10,6 +8,8 @@ public class Matrix
 
     public void WriteInFile(string filePath)
     {
+        ArgumentNullException.ThrowIfNull(filePath);
+
         using var writer = new StreamWriter(filePath);
 
         for (int i = 0; i < Size.row; ++i)
@@ -47,7 +47,7 @@ public class Matrix
 
             if (line.Length != MatrixArray.GetLength(1))
             {
-                throw new InvalidDataException();
+                throw new InvalidDataException("The matrix is not completely filled");
             }
 
             for (int j = 0; j < line.Length; ++j)
@@ -59,6 +59,8 @@ public class Matrix
 
     public Matrix(int[,] matrix)
     {
+        ArgumentNullException.ThrowIfNull(matrix);
+
         MatrixArray = matrix;
     }
 
