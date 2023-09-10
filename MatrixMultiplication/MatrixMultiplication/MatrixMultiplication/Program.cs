@@ -1,38 +1,31 @@
-﻿using MatrixMultiplication.Models;
-using MatrixMultiplication;
-using MatrixMultiplication.Experiment;
+﻿using MatrixMultiplication;
 
-var test = new ((int, int), (int, int))[3] { ((256, 256), (256, 256)), ((256, 256), (256, 256)), ((256, 256), (256, 256)) };
-ExperimentWriter.CreateTable(test);
+if (args.Length < 2)
+{
+    Console.WriteLine("Not enough matrix files");
+    return;
+}
 
-//if (args.Length < 2)
-//{
-//    Console.WriteLine("Not enough matrix files");
-//    return;
-//}
+Matrix result;
 
-//Matrix firstMatrix;
-//Matrix secondMatrix;
-//Matrix result;
+try
+{
+    var firstMatrix = new Matrix(args[0]);
+    var secondMatrix = new Matrix(args[1]);
 
-//try
-//{
-//    firstMatrix = new Matrix(args[0]);
-//    secondMatrix = new Matrix(args[1]);
+    result = MatrixOperations.MultiplyMatrices(firstMatrix, secondMatrix);
+}
+catch (InvalidDataException e)
+{
+    Console.WriteLine(e.Message);
+    return;
+}
+catch (FileNotFoundException)
+{
+    Console.WriteLine("File not found");
+    return;
+}
 
-//    result = MatrixOperations.MultiplyMatrices(firstMatrix, secondMatrix);
-//}
-//catch (InvalidDataException e)
-//{
-//    Console.WriteLine(e.Message);
-//    return;
-//}
-//catch (FileNotFoundException)
-//{
-//    Console.WriteLine("File not found");
-//    return;
-//}
+result.WriteInFile("result.txt");
 
-//result.WriteInFile("result.txt");
-
-//Console.WriteLine("Multiplication Completed");
+Console.WriteLine("Multiplication Completed");

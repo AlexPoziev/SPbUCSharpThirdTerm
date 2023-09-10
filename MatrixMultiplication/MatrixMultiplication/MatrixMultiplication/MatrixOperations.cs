@@ -1,9 +1,16 @@
-﻿using MatrixMultiplication.Models;
+﻿namespace MatrixMultiplication;
 
-namespace MatrixMultiplication;
-
+/// <summary>
+/// Class for matrix operations.
+/// </summary>
 public static class MatrixOperations
 {
+    /// <summary>
+    /// Method that perform consistent matrix multiplication.
+    /// </summary>
+    /// <returns>Matrix that is the result of multiplication.</returns>
+    /// <exception cref="InvalidDataException">Incorrect size of matrices.</exception>
+    /// <exception cref="ArgumentNullException"></exception>
     public static Matrix MultiplyMatrices(Matrix firstMatrix, Matrix secondMatrix)
     {
         ArgumentNullException.ThrowIfNull(firstMatrix);
@@ -16,13 +23,13 @@ public static class MatrixOperations
 
         var matrix = new int[firstMatrix.Size.row, secondMatrix.Size.column];
 
-        for (int i = 0; i < firstMatrix.Size.row; ++i)
+        for (var i = 0; i < firstMatrix.Size.row; ++i)
         {
-            for (int j = 0; j < secondMatrix.Size.column; ++j)
+            for (var j = 0; j < secondMatrix.Size.column; ++j)
             {
-                for (int k = 0; k < firstMatrix.Size.column; ++k)
+                for (var k = 0; k < firstMatrix.Size.column; ++k)
                 {
-                    matrix[i, j] += firstMatrix.MatrixArray[i, k] * secondMatrix.MatrixArray[k, j];
+                    matrix[i, j] += firstMatrix[i, k] * secondMatrix[k, j];
                 }
             }
         }
@@ -30,6 +37,12 @@ public static class MatrixOperations
         return new Matrix(matrix);
     }
 
+    /// <summary>
+    /// Method that perform parallel matrix multiplication.
+    /// </summary>
+    /// <returns>Matrix that is the result of multiplication.</returns>
+    /// <exception cref="InvalidDataException">Incorrect size of matrices.</exception>
+    /// <exception cref="ArgumentNullException"></exception>
     public static Matrix MultiplyMatricesParallel(Matrix firstMatrix, Matrix secondMatrix)
     {
         ArgumentNullException.ThrowIfNull(firstMatrix);
@@ -40,34 +53,33 @@ public static class MatrixOperations
             throw new InvalidDataException("Invalid matrices sizes");
         }
 
-        var blockSize = 16;
+        const int blockSize = 16;
         var threadsCount = Environment.ProcessorCount;
         var rowsPerThread = firstMatrix.Size.row / threadsCount + 1;
 
         var threads = new Thread[threadsCount];
         var matrix = new int[firstMatrix.Size.row, secondMatrix.Size.column];
 
-        for (int t = 0; t < threadsCount; ++t)
+        for (var t = 0; t < threadsCount; ++t)
         {
             var localt = t;
             threads[t] = new Thread(() =>
             {
-                for (int row = localt * rowsPerThread; row < (localt + 1) * rowsPerThread && row < firstMatrix.Size.row; ++row)
-                {
-                    for (int block = 0; block < secondMatrix.Size.column; block += blockSize)
+                for (var row = localt * rowsPerThread; row < (localt + 1) * rowsPerThread && row < firstMatrix.Size.row; ++row)
+                    for (var block = 0; block < secondMatrix.Size.column; block += blockSize)
                     {
-                        for (int chunk = 0; chunk < firstMatrix.Size.column; chunk += blockSize)
+                        for (var chunk = 0; chunk < firstMatrix.Size.column; chunk += blockSize)
                         {
-                            for (int subChunk = 0; subChunk < blockSize && subChunk + chunk < firstMatrix.Size.column; ++subChunk)
+                            for (var subChunk = 0; subChunk < blockSize && subChunk + chunk < firstMatrix.Size.column; ++subChunk)
                             {
-                                for (int i = 0; i < blockSize && i + block < secondMatrix.Size.column; ++i)
+                                for (var i = 0; i < blockSize && i + block < secondMatrix.Size.column; ++i)
                                 {
-                                    matrix[row, block + i] += firstMatrix.MatrixArray[row, chunk + subChunk] * secondMatrix.MatrixArray[chunk + subChunk, block + i];
+                                    matrix[row, block + i] += firstMatrix[row, chunk + subChunk] *
+                                                              secondMatrix[chunk + subChunk, block + i];
                                 }
                             }
                         }
                     }
-                }
             });
         }
 
@@ -84,4 +96,3 @@ public static class MatrixOperations
         return new Matrix(matrix);
     }
 }
-
