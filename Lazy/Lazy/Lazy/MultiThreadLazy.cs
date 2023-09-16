@@ -1,7 +1,12 @@
 namespace Lazy;
 
+/// <summary>
+/// Interface for providing multi thread lazy initialization.
+/// </summary>
 public class MultiThreadLazy<T> : ILazy<T>
 {
+    private Exception? thrownException;
+    
     private readonly object lockObject = new();
     
     private volatile bool flag;
@@ -10,17 +15,31 @@ public class MultiThreadLazy<T> : ILazy<T>
 
     private T? result;
     
+    /// <summary>
+    /// Constructor for multi thread lazy class.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="supplier">method for value initializing</param>
     public MultiThreadLazy(Func<T> supplier)
     {
-        ArgumentNullException.ThrowIfNull(this.supplier);
+        ArgumentNullException.ThrowIfNull(supplier);
         
         this.supplier = supplier;
     }
     
+    /// <summary>
+    /// Gets the lazily initialized value.
+    /// </summary>
+    /// <exception cref="Exception">exception of supplied function.</exception>
     public T? Get()
     {
         if (flag)
         {
+            if (thrownException != default)
+            {
+                throw thrownException;
+            }
+            
             return result;
         }
 
@@ -28,9 +47,20 @@ public class MultiThreadLazy<T> : ILazy<T>
         {
             if (!flag)
             {
-                flag = true;
-                result = supplier!();
-                supplier = default;
+                try
+                {
+                    result = supplier!();
+                }
+                catch (Exception e)
+                { 
+                    thrownException = e;
+                    throw;
+                }
+                finally
+                {
+                    supplier = default;
+                    flag = true;
+                }
             }
 
             return result;
