@@ -62,6 +62,11 @@ public class MultiThreadLazy<T> : ILazy<T>
                     flag = true;
                 }
             }
+            
+            if (thrownException != default)
+            {
+                throw thrownException;
+            }
 
             return result;
         }

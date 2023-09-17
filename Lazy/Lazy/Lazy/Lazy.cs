@@ -53,7 +53,7 @@ public class Lazy<T>: ILazy<T>
                 flag = true;
             }
         }
-
+        
         return result;
     }
 }
