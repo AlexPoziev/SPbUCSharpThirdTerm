@@ -45,7 +45,7 @@ public class Matrix
     /// <summary>
     /// Constructor by rectangle array.
     /// </summary>
-    /// <param name="matrix"></param>
+    /// <param name="matrix">matrix in rectangle array form</param>
     /// <exception cref="ArgumentNullException"></exception>
     public Matrix(int[,] matrix)
     {
@@ -57,8 +57,8 @@ public class Matrix
     /// <summary>
     /// Constructor for creating random matrices.
     /// </summary>
-    /// <param name="rowSize"></param>
-    /// <param name="columnSize"></param>
+    /// <param name="rowSize">row size of matrix</param>
+    /// <param name="columnSize">column size of matrix</param>
     public Matrix(int rowSize, int columnSize)
     {
         var random = new Random();
@@ -77,8 +77,8 @@ public class Matrix
     /// <summary>
     /// Matrix indexer.
     /// </summary>
-    /// <param name="row"></param>
-    /// <param name="columns"></param>
+    /// <param name="row">row number of element</param>
+    /// <param name="columns">column number of element</param>
     public int this [int row, int columns]
     {
         set => matrixArray[row, columns] = value;
@@ -88,12 +88,13 @@ public class Matrix
     /// <summary>
     /// Get size of the matrix.
     /// </summary>
-    public (int row, int column) Size => (matrixArray.GetLength(0), matrixArray.GetLength(1));
+    public (int row, int column) Size 
+        => (matrixArray.GetLength(0), matrixArray.GetLength(1));
 
     /// <summary>
     /// Method to write matrix to the file.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="filePath">file path to text file which contains matrix</param>
     /// <exception cref="ArgumentNullException"></exception>
     public void WriteInFile(string filePath)
     {
@@ -114,8 +115,8 @@ public class Matrix
 
     /// <summary>
     /// Method to check is two matrices equal.
+    /// <returns>true -- matrices are equal, else -- false</returns>
     /// </summary>
-    /// <param name="matrix"></param>
     public bool IsEqual(Matrix matrix)
     {
         ArgumentNullException.ThrowIfNull(matrix);

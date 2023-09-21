@@ -67,6 +67,7 @@ public static class MatrixOperations
             threads[t] = new Thread(() =>
             {
                 for (var row = localt * rowsPerThread; row < (localt + 1) * rowsPerThread && row < firstMatrix.Size.row; ++row)
+                {
                     for (var block = 0; block < secondMatrix.Size.column; block += blockSize)
                     {
                         for (var chunk = 0; chunk < firstMatrix.Size.column; chunk += blockSize)
@@ -81,6 +82,7 @@ public static class MatrixOperations
                             }
                         }
                     }
+                }
             });
         }
 

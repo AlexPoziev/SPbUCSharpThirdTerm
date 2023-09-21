@@ -7,6 +7,8 @@ namespace MatrixMultiplication.Experiment;
 /// </summary>
 public static class ExperimentEvaluations
 {
+    private static Stopwatch Stopwatch { get; } = new Stopwatch();
+    
     /// <summary>
     /// Method to find expectation and standard deviation of the mean
     /// </summary>
@@ -15,9 +17,10 @@ public static class ExperimentEvaluations
     /// <param name="isParallel">Which method need to check consistent -- false or parallel -- true.</param>
     /// <returns>Expectation and standard deviation of the mean</returns>
     public static (double average, double standardDeviation) EvaluateMatrixMultiplication(
-        
         (int row, int column) firstMatrixSize, (int row, int column) secondMatrixSize, bool isParallel)
     {
+        Stopwatch.Reset();
+        
         const int launchCount = 10;
         const int fractionalNumbersRound = 3;
 
@@ -26,25 +29,23 @@ public static class ExperimentEvaluations
 
         var results = new double[launchCount];
 
-        var stopwatch = new Stopwatch();
-
         for (var i = 0; i < launchCount; ++i)
         {
             if (isParallel)
             {
-                stopwatch.Start();
+                Stopwatch.Start();
                 MatrixOperations.MultiplyMatricesParallel(firstMatrix, secondMatrix);
-                stopwatch.Stop();
+                Stopwatch.Stop();
             }
             else
             {
-                stopwatch.Start();
+                Stopwatch.Start();
                 MatrixOperations.MultiplyMatrices(firstMatrix, secondMatrix);
-                stopwatch.Stop();
+                Stopwatch.Stop();
             }
 
-            results[i] = stopwatch.ElapsedMilliseconds;
-            stopwatch.Reset();
+            results[i] = Stopwatch.ElapsedMilliseconds;
+            Stopwatch.Reset();
         }
 
         var average = Math.Round(EvaluateAverage(results) / 1000, fractionalNumbersRound);

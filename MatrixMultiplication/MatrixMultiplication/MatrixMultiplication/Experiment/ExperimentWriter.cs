@@ -16,7 +16,6 @@ public static class ExperimentWriter
     /// <summary>
     /// Method that creates a table of experiment result in .pdf file.
     /// </summary>
-    /// <param name="matricesSizes"></param>
     public static void CreateTable(
         ((int rowSize, int columnSize) firstMatrixSize, (int rowSize, int columnSize) secondMatrixSize)[] matricesSizes)
     {
