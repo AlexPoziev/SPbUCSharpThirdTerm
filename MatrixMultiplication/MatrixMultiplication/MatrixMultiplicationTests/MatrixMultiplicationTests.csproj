@@ -20,4 +20,19 @@
   <ItemGroup>
     <ProjectReference Include="..\MatrixMultiplication\MatrixMultiplication.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestsFiles\FailMatrix.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestsFiles\FirstMatrix.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestsFiles\ResultMatrix.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestsFiles\SecondMatrix.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
