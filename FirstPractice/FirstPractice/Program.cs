@@ -1,6 +1,4 @@
 ﻿using FirstPractice;
 
-// var test = new EatingTable(2);
-// test.StartEating();
-
-var test = Console.ReadKey();
+var test = new EatingTable(2);
+test.StartEating();

@@ -69,17 +69,17 @@ public class EatingTable
         Thread.Sleep(1000);
         mre.Set();
        
-        
-        foreach (var thread in threads)
-            thread.Join();
-
-        var test = Console.ReadKey(true);
-
-        if (test.Key == ConsoleKey.Enter)
+        while (flag)
         {
-            flag = false;
+            var test = Console.ReadKey(true);
+
+            if (test.Key == ConsoleKey.Enter)
+            {
+                flag = false;
+            }
         }
 
-        return;
+        foreach (var thread in threads)
+            thread.Join();
     }
 }
