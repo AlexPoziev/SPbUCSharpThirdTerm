@@ -12,8 +12,8 @@ public static class ExperimentEvaluations
     /// <summary>
     /// Method to find expectation and standard deviation of the mean
     /// </summary>
-    /// <param name="firstMatrixSize"></param>
-    /// <param name="secondMatrixSize"></param>
+    /// <param name="firstMatrixSize">Dimensions of the first matrix</param>
+    /// <param name="secondMatrixSize">Dimensions of the second matrix</param>
     /// <param name="isParallel">Which method need to check consistent -- false or parallel -- true.</param>
     /// <returns>Expectation and standard deviation of the mean</returns>
     public static (double average, double standardDeviation) EvaluateMatrixMultiplication(

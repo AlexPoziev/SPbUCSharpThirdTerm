@@ -89,7 +89,7 @@ public class Matrix
     /// Get size of the matrix.
     /// </summary>
     public (int row, int column) Size 
-        => (matrixArray.GetLength(0), matrixArray.GetLength(1));
+            => (matrixArray.GetLength(0), matrixArray.GetLength(1));
 
     /// <summary>
     /// Method to write matrix to the file.
