@@ -10,9 +10,9 @@ public class Matrix
     /// <summary>
     /// Constructor of matrix by text file.
     /// </summary>
-    /// <param name="filePath"></param>
+    /// <param name="filePath">path to text file with matrix</param>
     /// <exception cref="InvalidDataException">Not matrix in file.</exception>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Throws if <see cref="filePath"/> is null</exception>
     public Matrix(string filePath)
     {
         ArgumentNullException.ThrowIfNull(filePath);
@@ -46,7 +46,7 @@ public class Matrix
     /// Constructor by rectangle array.
     /// </summary>
     /// <param name="matrix">matrix in rectangle array form</param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Throws if <see cref="matrix"/> is null</exception>
     public Matrix(int[,] matrix)
     {
         ArgumentNullException.ThrowIfNull(matrix);
@@ -95,7 +95,7 @@ public class Matrix
     /// Method to write matrix to the file.
     /// </summary>
     /// <param name="filePath">file path to text file which contains matrix</param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Throws if <see cref="filePath"/> is null</exception>
     public void WriteInFile(string filePath)
     {
         ArgumentNullException.ThrowIfNull(filePath);
@@ -116,6 +116,8 @@ public class Matrix
     /// <summary>
     /// Method to check is two matrices equal.
     /// <returns>true -- matrices are equal, else -- false</returns>
+    /// <param name="matrix">Matrix that need to be checked for equality with current one.</param>
+    ///  <exception cref="ArgumentNullException">Throws if <see cref="matrix"/> is null</exception>
     /// </summary>
     public bool IsEqual(Matrix matrix)
     {

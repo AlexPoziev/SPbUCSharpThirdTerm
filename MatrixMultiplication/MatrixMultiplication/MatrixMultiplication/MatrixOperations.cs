@@ -10,7 +10,7 @@ public static class MatrixOperations
     /// </summary>
     /// <returns>Matrix that is the result of multiplication.</returns>
     /// <exception cref="InvalidDataException">Incorrect size of matrices.</exception>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Throws if <see cref="firstMatrix"/> or <see cref="secondMatrix"/> are null</exception>
     public static Matrix MultiplyMatrices(Matrix firstMatrix, Matrix secondMatrix)
     {
         ArgumentNullException.ThrowIfNull(firstMatrix);
@@ -43,7 +43,7 @@ public static class MatrixOperations
     /// </summary>
     /// <returns>Matrix that is the result of multiplication.</returns>
     /// <exception cref="InvalidDataException">Incorrect size of matrices.</exception>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentNullException">Throws if <see cref="firstMatrix"/> or <see cref="secondMatrix"/> are null</exception>
     public static Matrix MultiplyMatricesParallel(Matrix firstMatrix, Matrix secondMatrix)
     {
         ArgumentNullException.ThrowIfNull(firstMatrix);
