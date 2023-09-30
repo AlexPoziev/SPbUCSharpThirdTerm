@@ -15,7 +15,7 @@ public class MyThreadPool
     private readonly object lockObject = new();
 
     /// <summary>
-    /// MyThreadPool constructor.
+    /// Initializes a new instance of the <see cref="MyThreadPool"/> class.
     /// </summary>
     /// <param name="threadsNumber">number of threads in ThreadPool</param>
     /// <exception cref="IndexOutOfRangeException">threads number must to be more than 0</exception>
@@ -23,18 +23,26 @@ public class MyThreadPool
     {
         if (threadsNumber <= 0)
         {
-            throw new IndexOutOfRangeException( "threads number must to be more than 0");
+            throw new IndexOutOfRangeException("threads number must to be more than 0");
         }
-        
+
         threads = Enumerable.Range(0, threadsNumber)
                 .Select(_ => new MyThread(cancellationTokenSource.Token, this.tasksQueue, this.threadRunController)).ToArray();
+    }
+    
+    /// <summary>
+    /// Gets number of working threads.
+    /// </summary>
+    public int WorkingThreadsNumber
+    {
+        get => threads.Count(thread => thread.IsWorking);
     }
 
     /// <summary>
     /// Queues a method for execution. The method executes when a thread pool thread becomes available.
     /// </summary>
     /// <param name="method">method for execution.</param>
-    /// <typeparam name="TResult">Result type of method</typeparam>
+    /// <typeparam name="TResult">Result type of method.</typeparam>
     /// <returns>Instance of <see cref="IMyTask{TResult}"/></returns>
     /// <exception cref="OperationCanceledException">Throws on attempt of submitting after shutdown</exception>
     public IMyTask<TResult> Submit<TResult>(Func<TResult> method)
@@ -42,11 +50,11 @@ public class MyThreadPool
         ArgumentNullException.ThrowIfNull(method);
 
         shutdownEvent.WaitOne();
-        
+
         lock (lockObject)
         {
             cancellationTokenSource.Token.ThrowIfCancellationRequested();
-            
+
             var newTask = new MyTask<TResult>(method, cancellationTokenSource.Token, this);
             tasksQueue.Enqueue(() => newTask.Compute());
             threadRunController.Release();
@@ -58,16 +66,18 @@ public class MyThreadPool
     /// <summary>
     /// Shut down the threads. Already running tasks are not interrupted,
     /// but new tasks are not accepted for execution by threads from the pool.
-    /// <exception cref="OperationCanceledException">Shutdown already done.</exception>
     /// </summary>
     public void Shutdown()
     {
         shutdownEvent.WaitOne();
-        
+
         shutdownEvent.Reset();
-        
-        cancellationTokenSource.Token.ThrowIfCancellationRequested();
-        
+
+        if (cancellationTokenSource.IsCancellationRequested)
+        {
+            return;
+        }
+
         cancellationTokenSource.Cancel();
         threadRunController.Release(threads.Length + 1);
 
@@ -78,28 +88,27 @@ public class MyThreadPool
 
         shutdownEvent.Set();
     }
-    
+
     /// <summary>
     /// Thread abstract for Thread, initially for checking it's state
     /// </summary>
     private class MyThread
     {
-        public bool IsWorking { get; private set; }
-        
-        private readonly Thread thread;
-        private readonly ConcurrentQueue<Action> tasksQueue;
-        private readonly Semaphore threadRunController;
         private readonly CancellationToken cancellationToken;
-        
+        private readonly Semaphore threadRunController;
+        private readonly ConcurrentQueue<Action> tasksQueue;
+        private readonly Thread thread;
+
         /// <summary>
-        /// Constructor of <see cref="MyThread"/>
+        /// Initializes a new instance of the <see cref="MyThread"/> class.
         /// </summary>
-        /// <param name="cancellationToken">cancellation token</param>
-        /// <param name="tasksQueue">queue of tasks for executing</param>
-        /// <param name="threadRunController">Semaphore, which release on submitting of a new task</param>
-        public MyThread(CancellationToken cancellationToken,
-                    ConcurrentQueue<Action> tasksQueue,
-                    Semaphore threadRunController)
+        /// <param name="cancellationToken">cancellation token.</param>
+        /// <param name="tasksQueue">queue of tasks for executing.</param>
+        /// <param name="threadRunController">Semaphore, which release on submitting of a new task.</param>
+        public MyThread(
+            CancellationToken cancellationToken,
+            ConcurrentQueue<Action> tasksQueue,
+            Semaphore threadRunController)
         {
             this.cancellationToken = cancellationToken;
             this.tasksQueue = tasksQueue;
@@ -107,15 +116,17 @@ public class MyThreadPool
             thread = CreateThread();
             thread.Start();
         }
-        
+
+        public bool IsWorking { get; private set; }
+
         /// <summary>
-        /// Thread join
+        /// Thread join.
         /// </summary>
         public void Join()
         {
             thread.Join();
         }
-        
+
         private Thread CreateThread()
         {
             return new Thread(() =>
@@ -134,12 +145,40 @@ public class MyThreadPool
             });
         }
     }
-    
+
     /// <inheritdoc cref="IMyTask{TResult}"/>
     private class MyTask<TResult> : IMyTask<TResult>
     {
+        private readonly Func<TResult> method;
+        private readonly ManualResetEvent resultWaitingEvent = new(false);
+        private readonly CancellationToken cancellationToken;
+        private readonly List<Action> continuationTasks = new();
+        private readonly object continuationBlockObject = new();
+        private readonly MyThreadPool threadPool;
+        private Exception? thrownException;
+        private TResult? result;
+
         /// <summary>
-        /// gets information about completion of task.
+        /// Initializes a new instance of the <see cref="MyTask{TResult}"/> class.
+        /// </summary>
+        /// <param name="method">method for execution</param>
+        /// <param name="cancellationToken">cancellation token</param>
+        /// <param name="threadPool">parental thread pool.</param>
+        /// <exception cref="ArgumentNullException">method can't be null</exception>
+        public MyTask(
+            Func<TResult> method,
+            CancellationToken cancellationToken,
+            MyThreadPool threadPool)
+        {
+            ArgumentNullException.ThrowIfNull(method);
+
+            this.cancellationToken = cancellationToken;
+            this.threadPool = threadPool;
+            this.method = method;
+        }
+
+        /// <summary>
+        /// Gets a value indicating completion of task.
         /// </summary>
         public bool IsCompleted { get; private set; }
 
@@ -156,7 +195,7 @@ public class MyThreadPool
                 if (!IsCompleted)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    
+
                     resultWaitingEvent.WaitOne();
                 }
 
@@ -164,38 +203,11 @@ public class MyThreadPool
                 {
                     throw new AggregateException(thrownException);
                 }
-                
+
                 return result ?? throw new InvalidOperationException();
             }
         }
 
-        private readonly Func<TResult> method;
-        private Exception? thrownException;
-        private TResult? result;
-        private readonly ManualResetEvent resultWaitingEvent = new(false);
-        private readonly CancellationToken cancellationToken;
-        private readonly List<Action> continuationTasks = new();
-        private readonly object continuationBlockObject = new();
-        private readonly MyThreadPool threadPool;
-        
-        /// <summary>
-        /// constructor of <see cref="MyTask{TResult}"/>
-        /// </summary>
-        /// <param name="method">method for execution</param>
-        /// <param name="cancellationToken">cancellation token</param>
-        /// <param name="threadPool">parental thread pool.</param>
-        /// <exception cref="ArgumentNullException">method can't be null</exception>
-        public MyTask(Func<TResult> method,
-                    CancellationToken cancellationToken,
-                    MyThreadPool threadPool)
-        {
-            ArgumentNullException.ThrowIfNull(method);
-            
-            this.cancellationToken = cancellationToken;
-            this.threadPool = threadPool;
-            this.method = method;
-        }
-        
         /// <summary>
         /// apply method to the result of this task.
         /// </summary>
@@ -206,11 +218,11 @@ public class MyThreadPool
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> continueMethod)
         {
             ArgumentNullException.ThrowIfNull(continueMethod);
-            
+
             lock (continuationBlockObject)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 if (IsCompleted)
                 {
                     return threadPool.Submit(() => continueMethod(Result));
@@ -222,7 +234,7 @@ public class MyThreadPool
                 return newTask;
             }
         }
-        
+
         /// <summary>
         /// method to compute result of <see cref="method"/>
         /// </summary>
@@ -234,7 +246,7 @@ public class MyThreadPool
             {
                 throw new OperationCanceledException();
             }
-            
+
             try
             {
                 result = method.Invoke() ?? throw new InvalidOperationException();
@@ -246,16 +258,19 @@ public class MyThreadPool
 
             IsCompleted = true;
 
-            foreach (var task in continuationTasks)
+            lock (continuationBlockObject)
             {
-                threadPool.shutdownEvent.WaitOne();
-        
-                lock (threadPool.lockObject)
+                foreach (var task in continuationTasks)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    
-                    threadPool.tasksQueue.Enqueue(task);
-                    threadPool.threadRunController.Release();
+                    threadPool.shutdownEvent.WaitOne();
+
+                    lock (threadPool.lockObject)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        threadPool.tasksQueue.Enqueue(task);
+                        threadPool.threadRunController.Release();
+                    }
                 }
             }
 
