@@ -1,5 +1,3 @@
-using System.Dynamic;
-using System.Net.Mime;
 using Lazy;
 
 namespace LazyTests;
@@ -9,7 +7,7 @@ public class LazyTests
     private static int invokeCounter = 0;
     
     [Test]
-    public void MultiILazyGetWithIncrementShouldReturnSameResult()
+    public void MultiThreadLazyGetWithIncrementShouldReturnSameResult()
     {
         var mre = new ManualResetEvent(false);
         
@@ -51,43 +49,48 @@ public class LazyTests
         }
     }
 
-    [Test]
-    public void SingleThreadedLazyShouldReturnExpectedResult()
+    [TestCaseSource(nameof(TestOneThreadMethodInvocation))]
+    public void SingleThreadedLazyShouldReturnExpectedResult(ILazy<int> lazy)
     {
         const int expectedResult = 1;
-        var value = 0;
-
-        var lazy = new Lazy.Lazy<int>(() => Interlocked.Increment(ref value));
-
+        
         var firstResult = lazy.Get();
         var secondResult = lazy.Get();
         
         Assert.That(firstResult.Equals(secondResult) && firstResult.Equals(expectedResult));
+        
+        invokeCounter = 0;
     }
     
-    [TestCaseSource(nameof(TestLaziesArgumentException))]
+    [TestCaseSource(nameof(TestLaziesException))]
     public void ResultAfterExceptionShouldBeException(ILazy<int> lazy)
     {
         const int expectedResult = 1;
 
-        Assert.Throws<ArgumentException>(() => lazy.Get());
-        Assert.Throws<ArgumentException>(() => lazy.Get());
+        Assert.Throws<AggregateException>(() => lazy.Get());
+        Assert.Throws<AggregateException>(() => lazy.Get());
      
         Assert.That(invokeCounter, Is.EqualTo(expectedResult));
 
         invokeCounter = 0;
     }
 
-    private static IEnumerable<ILazy<int>> TestLaziesArgumentException()
+    private static IEnumerable<ILazy<int>> TestLaziesException()
     {
         var method = () =>
         {
+            var exceptionArray = new int[1];
             Interlocked.Increment(ref invokeCounter);
-            throw new ArgumentException();
-            return -1;
+            return exceptionArray[invokeCounter];
         };
 
         yield return new Lazy.Lazy<int>(method);
         yield return new MultiThreadLazy<int>(method);
+    }
+
+    private static IEnumerable<ILazy<int>> TestOneThreadMethodInvocation()
+    {
+        yield return new Lazy.Lazy<int>(() => Interlocked.Increment(ref invokeCounter));
+        yield return new MultiThreadLazy<int>(() => Interlocked.Increment(ref invokeCounter));
     }
 }

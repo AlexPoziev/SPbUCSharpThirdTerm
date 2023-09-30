@@ -9,7 +9,7 @@ public class MultiThreadLazy<T> : ILazy<T>
     
     private readonly object lockObject = new();
     
-    private volatile bool flag;
+    private volatile bool isResultCalculated;
 
     private Func<T?>? supplier;
 
@@ -30,45 +30,37 @@ public class MultiThreadLazy<T> : ILazy<T>
     /// <summary>
     /// Gets the lazily initialized value.
     /// </summary>
-    /// <exception cref="Exception">exception of supplied function.</exception>
+    /// <exception cref="AggregateException">exception of supplied function.</exception>
     public T? Get()
     {
-        if (flag)
+        if (!isResultCalculated)
         {
-            if (thrownException != default)
+            lock (lockObject)
             {
-                throw thrownException;
+                if (!isResultCalculated)
+                {
+                    try
+                    {
+                        result = supplier!();
+                    }
+                    catch (Exception e)
+                    {
+                        thrownException = e;
+                    }
+                    finally
+                    {
+                        supplier = default;
+                        isResultCalculated = true;
+                    }
+                }
             }
-            
-            return result;
+        }
+        
+        if (thrownException != default)
+        {
+            throw new AggregateException(thrownException);
         }
 
-        lock (lockObject)
-        {
-            if (!flag)
-            {
-                try
-                {
-                    result = supplier!();
-                }
-                catch (Exception e)
-                { 
-                    thrownException = e;
-                    throw;
-                }
-                finally
-                {
-                    supplier = default;
-                    flag = true;
-                }
-            }
-            
-            if (thrownException != default)
-            {
-                throw thrownException;
-            }
-
-            return result;
-        }
+        return result;
     }
 }

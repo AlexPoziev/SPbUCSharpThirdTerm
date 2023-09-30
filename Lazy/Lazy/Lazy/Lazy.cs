@@ -7,7 +7,7 @@ public class Lazy<T>: ILazy<T>
 {
     private Exception? thrownException;
     
-    private bool flag;
+    private bool isResultCalculated;
 
     private Func<T?>? supplier;
 
@@ -28,15 +28,10 @@ public class Lazy<T>: ILazy<T>
     /// <summary>
     /// Gets the lazily initialized value.
     /// </summary>
-    /// <exception cref="Exception">exception of supplied function.</exception>
+    /// <exception cref="AggregateException">exception of supplied function.</exception>
     public T? Get()
     {
-        if (thrownException != null)
-        {
-            throw thrownException;
-        }
-        
-        if (!flag)
+        if (!isResultCalculated)
         {
             try
             {
@@ -45,13 +40,17 @@ public class Lazy<T>: ILazy<T>
             catch (Exception e)
             {
                 thrownException = e;
-                throw;
             }
             finally
             {
                 supplier = default;
-                flag = true;
+                isResultCalculated = true;
             }
+        }
+        
+        if (thrownException != null)
+        {
+            throw new AggregateException(thrownException);
         }
         
         return result;
