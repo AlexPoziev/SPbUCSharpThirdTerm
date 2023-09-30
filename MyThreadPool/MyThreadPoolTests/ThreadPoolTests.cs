@@ -37,11 +37,11 @@ public class MyTaskTest
     [Test]
     public void ThreadPoolShouldUseAllThreads()
     {
-        for (var i = 0; i < threadPoolSize + 1; ++i)
+        for (var i = 0; i < threadPoolSize * 5; ++i)
         {
             threadPool.Submit(() =>
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
 
                 return 1;
             });

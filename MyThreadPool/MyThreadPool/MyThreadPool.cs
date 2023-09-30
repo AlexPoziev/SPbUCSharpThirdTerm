@@ -56,7 +56,7 @@ public class MyThreadPool
             cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             var newTask = new MyTask<TResult>(method, cancellationTokenSource.Token, this);
-            tasksQueue.Enqueue(() => newTask.Compute());
+            tasksQueue.Enqueue(() => newTask.Evaluate());
             threadRunController.Release();
 
             return newTask;
@@ -229,7 +229,7 @@ public class MyThreadPool
                 }
 
                 var newTask = new MyTask<TNewResult>(() => continueMethod(Result), cancellationToken, threadPool);
-                continuationTasks.Add(() => newTask.Compute());
+                continuationTasks.Add(() => newTask.Evaluate());
 
                 return newTask;
             }
@@ -240,7 +240,7 @@ public class MyThreadPool
         /// </summary>
         /// <exception cref="OperationCanceledException">shutdown requested</exception>
         /// <exception cref="InvalidOperationException"><see cref="method"/> returned null</exception>
-        public void Compute()
+        public void Evaluate()
         {
             if (IsCompleted || cancellationToken.IsCancellationRequested)
             {
