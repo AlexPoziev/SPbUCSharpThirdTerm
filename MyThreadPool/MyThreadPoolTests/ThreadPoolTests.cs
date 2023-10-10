@@ -47,6 +47,8 @@ public class MyTaskTest
             });
         }
         
+        Thread.Sleep(250);
+        
         Assert.That(threadPool.WorkingThreadsNumber, Is.EqualTo(threadPoolSize));
     }
     
