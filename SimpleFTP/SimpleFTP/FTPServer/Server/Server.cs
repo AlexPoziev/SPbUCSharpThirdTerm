@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace SimpleFTP.Server;
 
-public class Server : IDisposable
+public class Server
 {
     private readonly CancellationTokenSource tokenSource;
 
@@ -11,76 +11,92 @@ public class Server : IDisposable
 
     private readonly TcpListener listener;
     
-    public int GetPort { get; }
-    
     public Server(int port)
     {
         SocketAlreadyUsedException.ThrowIfInUse(port);
         
         listener = new TcpListener(IPAddress.Any, port);
-        GetPort = port;
         clients = new();
         tokenSource = new();
     }
     
     public async Task Start()
     {
-        try
-        {
-            listener.Start();
+        listener.Start();
 
-            while (!tokenSource.IsCancellationRequested)
-            {
-                var client = await listener.AcceptTcpClientAsync();
-                clients.Add(client);
-                HandleRequests(client.GetStream(), tokenSource.Token);
-            }
-        }
-        finally
+        var tasks = new List<Task>();
+        
+        while (!tokenSource.IsCancellationRequested)
         {
-            Dispose();
+            var client = await listener.AcceptTcpClientAsync(tokenSource.Token);
+            Console.WriteLine("New Connection");
+            clients.Add(client);
+            tasks.Add(HandleRequests(client, tokenSource.Token));
         }
+
+        Task.WaitAll(tasks.ToArray());
+        ClearAfterStop();
     }
 
-    private static void HandleRequests(NetworkStream stream, CancellationToken token)
-    {
-        Task.Run(async () =>
-        {
-            await using var writer = new StreamWriter(stream);
-            using var reader = new StreamReader(stream);
-            
-            while (!token.IsCancellationRequested)
-            {
-                var data = await reader.ReadLineAsync(token);
+    public void Stop()
+        => tokenSource.Cancel();
 
-                if (data is null)
-                {
-                    continue;
-                }
-
-                var request = data.Split();
-                var result = request[0] switch
-                {
-                    "2" => await Service.GetFileData(request[1]),
-                    "1" => Service.ListDirectory(request[1]),
-                    _ => "Request number not found"
-                };
-
-                await writer.WriteAsync(result);
-                await writer.FlushAsync();
-            }
-        });
-    }
-
-    public void Dispose()
+    private void ClearAfterStop()
     {
         foreach (var client in clients)
         {
-            client.Close();            
+            client.Close();
         }
 
         clients.Clear();
-        
+
         listener.Stop();
+    }
+
+    private Task HandleRequests(TcpClient client, CancellationToken token)
+    {
+        return Task.Run(async () =>
+        {
+            try
+            {
+                await using var stream = client.GetStream();
+                await using var writer = new StreamWriter(stream);
+                using var reader = new StreamReader(stream);
+
+                while (!token.IsCancellationRequested)
+                {
+                    var data = await reader.ReadLineAsync(token);
+
+                    if (data is null)
+                    {
+                        continue;
+                    }
+
+                    var request = data.Split();
+                    var result = request[0] switch
+                    {
+                        "2" => await Service.GetFileData(request[1]),
+                        "1" => Service.ListDirectory(request[1]),
+                        _ => "Request number not found"
+                    };
+
+                    await writer.WriteAsync(result);
+                    await writer.FlushAsync();
+                }
+            }
+            catch
+            {
+                Disconnect(client);
+                Console.WriteLine("User Disconnected.");
+            }
+        }, token);
+    }
+
+    private void Disconnect(TcpClient client)
+    {
+        if (clients.Remove(client))
+        {
+            client.Close();
+        }
     }
 }

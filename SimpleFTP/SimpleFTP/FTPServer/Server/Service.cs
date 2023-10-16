@@ -48,7 +48,7 @@ public static class Service
 
         var result = new StringBuilder();
         
-        var file = await File.ReadAllBytesAsync(path);
+        var file = Encoding.UTF8.GetString(await File.ReadAllBytesAsync(path));
         
         result.Append($"{file.Length} ");
         result.Append(file);
