@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace SimpleFTP.Server;
 
@@ -60,28 +61,27 @@ public class Server
             try
             {
                 await using var stream = client.GetStream();
-                await using var writer = new StreamWriter(stream);
-                using var reader = new StreamReader(stream);
+                
+                var buffer = new byte[client.ReceiveBufferSize]; 
 
                 while (!token.IsCancellationRequested)
                 {
-                    var data = await reader.ReadLineAsync(token);
+                    var bytesRead = await stream.ReadAsync(buffer, token);
 
-                    if (data is null)
+                    var request = Encoding.UTF8.GetString(buffer, 0, bytesRead).Split();
+
+                    switch (request[0])
                     {
-                        continue;
+                        case "1":
+                            await Service.ListAsync(request[1], stream);
+                            break;
+                        case "2":
+                            await Service.GetFileAsync(request[1], stream);
+                            break;
+                        default:
+                            await Service.SendResponse("Operation not found", stream);
+                            break;
                     }
-
-                    var request = data.Split();
-                    var result = request[0] switch
-                    {
-                        "2" => await Service.GetFileData(request[1]),
-                        "1" => Service.ListDirectory(request[1]),
-                        _ => "Request number not found"
-                    };
-
-                    await writer.WriteAsync(result);
-                    await writer.FlushAsync();
                 }
             }
             catch

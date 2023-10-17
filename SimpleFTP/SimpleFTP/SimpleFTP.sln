@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPServer", "FTPServer\FTPServer.csproj", "{22B419AD-906F-4369-8C49-86DB450A97D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPClient", "FTPClient\FTPClient.csproj", "{1EA26AA5-1E56-4C3A-9579-D76ECC75C7EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPClient", "FTPClient\FTPClient.csproj", "{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +14,9 @@ Global
 		{22B419AD-906F-4369-8C49-86DB450A97D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22B419AD-906F-4369-8C49-86DB450A97D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22B419AD-906F-4369-8C49-86DB450A97D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EA26AA5-1E56-4C3A-9579-D76ECC75C7EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EA26AA5-1E56-4C3A-9579-D76ECC75C7EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EA26AA5-1E56-4C3A-9579-D76ECC75C7EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EA26AA5-1E56-4C3A-9579-D76ECC75C7EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

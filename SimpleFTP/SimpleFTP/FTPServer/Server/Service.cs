@@ -4,13 +4,13 @@ namespace SimpleFTP.Server;
 
 public static class Service
 {
-    public static string ListDirectory(string path)
+    public static async Task ListAsync(string path, Stream stream)
     {
-        const string incorrectPathResult = "-1";
+        const string incorrectPathResult = "-1\n";
 
         if (!Directory.Exists(path))
         {
-            return incorrectPathResult;
+            await SendResponse(incorrectPathResult, stream);
         }
 
         var result = new StringBuilder();
@@ -34,25 +34,28 @@ public static class Service
         result.Insert(0, $"{size}");
         result.Append('\n');
 
-        return result.ToString();
+        await SendResponse(result.ToString(), stream);
     }
 
-    public static async Task<string> GetFileData(string path)
+    public static async Task GetFileAsync(string path, Stream stream)
     {
-        const string incorrectPathResult = "-1";
+        const string incorrectPathResult = "-1 ";
         
         if (!File.Exists(path))
         {
-            return incorrectPathResult;
+            await SendResponse(incorrectPathResult, stream);
         }
 
-        var result = new StringBuilder();
-        
-        var file = Encoding.UTF8.GetString(await File.ReadAllBytesAsync(path));
-        
-        result.Append($"{file.Length} ");
-        result.Append(file);
+        await SendResponse($"{new FileInfo(path).Length} ", stream);
 
-        return result.ToString();
+        var file = File.OpenRead(path);
+
+        await file.CopyToAsync(stream);
+    }
+
+    public static async Task SendResponse(string response, Stream stream)
+    {
+        await stream.WriteAsync(Encoding.UTF8.GetBytes(response));
+        await stream.FlushAsync();
     }
 }
