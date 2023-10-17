@@ -1,9 +1,12 @@
+namespace SimpleFTP.Server;
+
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace SimpleFTP.Server;
-
+/// <summary>
+/// Server which supports SimpleFTP protocol.
+/// </summary>
 public class Server
 {
     private readonly CancellationTokenSource tokenSource;
@@ -11,22 +14,28 @@ public class Server
     private readonly List<TcpClient> clients;
 
     private readonly TcpListener listener;
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Server"/> class.
+    /// </summary>
+    /// <param name="port">port number.</param>
     public Server(int port)
     {
-        SocketAlreadyUsedException.ThrowIfInUse(port);
-        
         listener = new TcpListener(IPAddress.Any, port);
         clients = new();
         tokenSource = new();
     }
-    
+
+    /// <summary>
+    /// Starts work of server.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task Start()
     {
         listener.Start();
 
         var tasks = new List<Task>();
-        
+
         while (!tokenSource.IsCancellationRequested)
         {
             var client = await listener.AcceptTcpClientAsync(tokenSource.Token);
@@ -39,6 +48,9 @@ public class Server
         ClearAfterStop();
     }
 
+    /// <summary>
+    /// Method that stops work of server.
+    /// </summary>
     public void Stop()
         => tokenSource.Cancel();
 
@@ -56,13 +68,14 @@ public class Server
 
     private Task HandleRequests(TcpClient client, CancellationToken token)
     {
-        return Task.Run(async () =>
+        return Task.Run(
+            async () =>
         {
             try
             {
                 await using var stream = client.GetStream();
-                
-                var buffer = new byte[client.ReceiveBufferSize]; 
+
+                var buffer = new byte[client.ReceiveBufferSize];
 
                 while (!token.IsCancellationRequested)
                 {
@@ -89,7 +102,8 @@ public class Server
                 Disconnect(client);
                 Console.WriteLine("User Disconnected.");
             }
-        }, token);
+        },
+            token);
     }
 
     private void Disconnect(TcpClient client)

@@ -1,5 +1,5 @@
 ﻿using SimpleFTP.Server;
 
-var server = new Server(8888);
+var server = new Server(7777);
 
 await server.Start();
