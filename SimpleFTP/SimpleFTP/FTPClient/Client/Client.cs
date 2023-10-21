@@ -2,7 +2,7 @@ namespace FTPClient.Client;
 
 using System.Net.Sockets;
 using System.Text;
-using FTPClient.Client.Models;
+using Models;
 
 /// <summary>
 /// Client which support SimpleFTP protocol.
@@ -97,7 +97,7 @@ public class Client
 
         var result = new List<DirectoryElement>();
 
-        for (var i = 1; i < size; ++i)
+        for (var i = 1; i <= size; ++i)
         {
             var fileName = response[(2 * i) - 1];
             var isDirectory = response[2 * i] switch

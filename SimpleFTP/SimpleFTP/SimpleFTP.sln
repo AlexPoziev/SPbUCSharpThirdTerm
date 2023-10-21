@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPServer", "FTPServer\FTPS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPClient", "FTPClient\FTPClient.csproj", "{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFTPTests", "SimpleFTPTests\SimpleFTPTests.csproj", "{65C7ACC1-CFEF-40B1-AC01-CFBB29B86DE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF0ECAB4-C80E-40DD-B0C7-A2E5853D8FDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65C7ACC1-CFEF-40B1-AC01-CFBB29B86DE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65C7ACC1-CFEF-40B1-AC01-CFBB29B86DE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65C7ACC1-CFEF-40B1-AC01-CFBB29B86DE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65C7ACC1-CFEF-40B1-AC01-CFBB29B86DE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
