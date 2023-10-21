@@ -110,7 +110,7 @@ public class Client
             result.Add(new DirectoryElement(fileName, isDirectory));
         }
 
-        return result;
+        return result.OrderBy(element => element.ElementName).ToList();
     }
 
     private static async Task<byte[]> HandleGetResponse(NetworkStream stream)

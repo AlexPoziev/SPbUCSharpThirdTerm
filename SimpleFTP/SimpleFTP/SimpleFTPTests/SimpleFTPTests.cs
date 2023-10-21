@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using FTPClient.Client;
 using FTPClient.Client.Models;
 using SimpleFTP.Server;
@@ -30,7 +31,9 @@ public class SimpleFtpTests
     public async Task ListShouldReturnExpectedValue()
     {
         const string path = "./TestFiles";
-        const string expectedResult = "DirectoryElement { ElementName = ./TestFiles/TestDirectory, IsDirectory = True } DirectoryElement { ElementName = ./TestFiles/TextDoc.txt, IsDirectory = False } DirectoryElement { ElementName = ./TestFiles/HelloWorld.exe, IsDirectory = False }";
+        var expectedResult = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "DirectoryElement { ElementName = ./TestFiles\\HelloWorld.exe, IsDirectory = False } DirectoryElement { ElementName = ./TestFiles\\TestDirectory, IsDirectory = True } DirectoryElement { ElementName = ./TestFiles\\TextDoc.txt, IsDirectory = False }"
+            : "DirectoryElement { ElementName = ./TestFiles/HelloWorld.exe, IsDirectory = False } DirectoryElement { ElementName = ./TestFiles/TestDirectory, IsDirectory = True } DirectoryElement { ElementName = ./TestFiles/TextDoc.txt, IsDirectory = False }";
         
         var result = string.Join(' ', (await client.ListAsync(path)).Select(element => element.ToString()));
         
