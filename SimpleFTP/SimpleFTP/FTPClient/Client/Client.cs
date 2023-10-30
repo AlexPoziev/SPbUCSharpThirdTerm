@@ -30,7 +30,8 @@ public class Client
     /// <returns>List of directory elements.</returns>
     public async Task<List<DirectoryElement>> ListAsync(string path)
     {
-        using var client = new TcpClient(hostName, port);
+        using var client = new TcpClient();
+        await client.ConnectAsync(hostName, port);
 
         var request = $"1 {path}\n";
 
@@ -49,7 +50,8 @@ public class Client
     /// <returns>File content.</returns>
     public async Task<byte[]> GetAsync(string path)
     {
-        using var client = new TcpClient(hostName, port);
+        using var client = new TcpClient();
+        await client.ConnectAsync(hostName, port);
 
         var request = $"2 {path}\n";
 
@@ -62,15 +64,7 @@ public class Client
 
         return await HandleGetResponse(stream);
     }
-
-    /*private static async Task SendRequest(NetworkStream stream, string request)
-    {
-        await using var writer = new StreamWriter(stream);
-
-        await writer.WriteAsync(request);
-        await writer.FlushAsync();
-    }*/
-
+    
     private static async Task<List<DirectoryElement>> HandleListResponse(NetworkStream stream)
     {
         const int bufferSize = 8192;
