@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkChat", "NetworkChat\NetworkChat.csproj", "{732D4889-D35C-45A6-9C3D-BD36495A075A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatTests", "ChatTests\ChatTests.csproj", "{1DC1B3AC-93BB-48F1-A7EE-55472838A626}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{732D4889-D35C-45A6-9C3D-BD36495A075A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{732D4889-D35C-45A6-9C3D-BD36495A075A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{732D4889-D35C-45A6-9C3D-BD36495A075A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{732D4889-D35C-45A6-9C3D-BD36495A075A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DC1B3AC-93BB-48F1-A7EE-55472838A626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DC1B3AC-93BB-48F1-A7EE-55472838A626}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DC1B3AC-93BB-48F1-A7EE-55472838A626}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DC1B3AC-93BB-48F1-A7EE-55472838A626}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
