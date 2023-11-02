@@ -3,33 +3,48 @@ using System.Net.Sockets;
 
 namespace NetworkChat;
 
+/// <summary>
+/// Provides server of chat functionality.
+/// </summary>
 public class Server: ChatNode
 {
     private readonly TcpListener listener;
 
-    public bool IsWorking = false;
+    /// <summary>
+    /// Gets or sets a value indicating whether this <see cref="Server"/> is running.
+    /// </summary>
+    public bool IsWorking { get; private set; }
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Client"/>
+    /// </summary>
+    /// <param name="port">port to listen to.</param>
     public Server(int port) : base(Console.In, Console.Out)
     {
         listener = new TcpListener(IPAddress.Any, port);
     }
     
-    public Server(int port, TextReader reader, TextWriter writer) : base(reader, writer)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Client"/> class
+    /// </summary>
+    /// <param name="port">port to listen to.</param>
+    /// <param name="stream">stream to write conversation to</param>
+    public Server(int port, Stream stream) : base(stream)
     {
         listener = new TcpListener(IPAddress.Any, port);
     }
     
-    public async Task Start()
+    /// <summary>
+    /// Starts the server async.
+    /// </summary>
+    public async Task StartAsync()
     {
         listener.Start();
-        
-        Console.WriteLine("Server waiting for connection...");
 
         IsWorking = true;
         
         var client = await listener.AcceptTcpClientAsync();
         var stream = client.GetStream();
-        Console.WriteLine("Connection established");
         
         Writer(stream);
         Reader(stream);
@@ -41,6 +56,9 @@ public class Server: ChatNode
         IsWorking = false;
     }
     
+    /// <summary>
+    /// stops the server.
+    /// </summary>
     public void Stop()
     {
         cancellationTokenSource.Cancel();
