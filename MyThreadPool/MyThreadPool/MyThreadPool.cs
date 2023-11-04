@@ -49,17 +49,24 @@ public class MyThreadPool
     {
         ArgumentNullException.ThrowIfNull(method);
 
+        var newTask = new MyTask<TResult>(method, cancellationTokenSource.Token, this);
+        
+        Submit(newTask.Evaluate);
+        
+        return newTask;
+    }
+    
+    private void Submit(Action task)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+
         shutdownEvent.WaitOne();
 
         lock (lockObject)
         {
             cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-            var newTask = new MyTask<TResult>(method, cancellationTokenSource.Token, this);
-            tasksQueue.Enqueue(() => newTask.Evaluate());
+            tasksQueue.Enqueue(task);
             threadRunController.Release();
-
-            return newTask;
         }
     }
 
@@ -117,19 +124,18 @@ public class MyThreadPool
             thread.Start();
         }
 
+        /// <summary>
+        /// Gets a value indicating whether thread is working.
+        /// </summary>
         public bool IsWorking { get; private set; }
 
         /// <summary>
         /// Thread join.
         /// </summary>
-        public void Join()
-        {
-            thread.Join();
-        }
+        public void Join() => thread.Join();
 
-        private Thread CreateThread()
-        {
-            return new Thread(() =>
+        private Thread CreateThread() 
+            => new(() =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
@@ -143,7 +149,6 @@ public class MyThreadPool
                     }
                 }
             });
-        }
     }
 
     /// <inheritdoc cref="IMyTask{TResult}"/>
@@ -218,6 +223,8 @@ public class MyThreadPool
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> continueMethod)
         {
             ArgumentNullException.ThrowIfNull(continueMethod);
+            
+            threadPool.shutdownEvent.WaitOne();
 
             lock (continuationBlockObject)
             {
@@ -227,7 +234,7 @@ public class MyThreadPool
                 {
                     return threadPool.Submit(() => continueMethod(Result));
                 }
-
+                
                 var newTask = new MyTask<TNewResult>(() => continueMethod(Result), cancellationToken, threadPool);
                 continuationTasks.Add(() => newTask.Evaluate());
 
@@ -260,18 +267,7 @@ public class MyThreadPool
 
             lock (continuationBlockObject)
             {
-                foreach (var task in continuationTasks)
-                {
-                    threadPool.shutdownEvent.WaitOne();
-
-                    lock (threadPool.lockObject)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        threadPool.tasksQueue.Enqueue(task);
-                        threadPool.threadRunController.Release();
-                    }
-                }
+                continuationTasks.ForEach(task => threadPool.Submit(task));
             }
 
             resultWaitingEvent.Set();

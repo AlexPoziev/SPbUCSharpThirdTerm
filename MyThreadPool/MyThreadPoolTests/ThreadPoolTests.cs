@@ -6,7 +6,7 @@ public class MyTaskTest
 {
     private readonly int threadPoolSize = 5;
     private MyThreadPool threadPool = null!;
-    private ManualResetEvent mre = new(false);
+    private readonly ManualResetEvent manualResetEvent = new(false);
 
     [SetUp]
     public void Initialization()
@@ -105,7 +105,7 @@ public class MyTaskTest
             var locali = i;
             threads[locali] = new Thread(() =>
                 {
-                    mre.WaitOne();
+                    manualResetEvent.WaitOne();
 
                     for (var j = threadPoolSize * locali; j < threadPoolSize * (locali + 1); ++j)
                     {
@@ -122,7 +122,7 @@ public class MyTaskTest
         
         Thread.Sleep(100);
 
-        mre.Set();
+        manualResetEvent.Set();
 
         foreach (var thread in threads)
         {
@@ -133,6 +133,6 @@ public class MyTaskTest
         
         Assert.That(result, Is.EqualTo(expectedResult));
 
-        mre.Reset();
+        manualResetEvent.Reset();
     }
 }
