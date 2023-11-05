@@ -41,15 +41,16 @@ public class MyTaskTest
         {
             threadPool.Submit(() =>
             {
-                Thread.Sleep(500);
+                manualResetEvent.WaitOne();
 
                 return 1;
             });
         }
         
-        Thread.Sleep(250);
-        
         Assert.That(threadPool.WorkingThreadsNumber, Is.EqualTo(threadPoolSize));
+        
+        manualResetEvent.Set();
+        manualResetEvent.Reset();
     }
     
     [Test]
@@ -132,7 +133,7 @@ public class MyTaskTest
         var result = test.Sum(x => x.Result);
         
         Assert.That(result, Is.EqualTo(expectedResult));
-
+        
         manualResetEvent.Reset();
     }
 }
