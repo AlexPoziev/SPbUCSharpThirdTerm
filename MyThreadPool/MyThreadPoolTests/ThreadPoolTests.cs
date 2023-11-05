@@ -134,4 +134,55 @@ public class MyTaskTest
         
         Assert.That(result, Is.EqualTo(expectedResult));
     }
+    
+    [Test]
+    public async Task ConcurrentSubmitAndShutdownShouldPerformExpectedResult()
+    {
+        const int expectedResult = 3628800;
+        const int factorialNumber = 10;
+        var actualResult = 0;
+        var submitTask = Task.Run(() =>
+        {
+            manualResetEvent.WaitOne();
+            
+            return threadPool.Submit(() => Enumerable.Range(1, factorialNumber).Aggregate(1, (a, b) => a * b));
+        });
+        var shutdownTak = Task.Run(() =>
+        {
+            manualResetEvent.WaitOne();
+            
+            threadPool.Shutdown();
+        });
+
+        try
+        {
+            manualResetEvent.Set(); 
+            actualResult = (await submitTask).Result;
+        }
+        catch (OperationCanceledException)
+        {
+            Assert.Pass();
+        }
+
+        Assert.That(actualResult, Is.EqualTo(expectedResult));
+    }
+
+    [Test]
+    public void IsCompletedShouldPerformExpectedBehaviour()
+    {
+        var task = threadPool.Submit(() =>
+        {
+            manualResetEvent.WaitOne();
+
+            return 0;
+        });
+        
+        Assert.That(task.IsCompleted, Is.False);
+        
+        manualResetEvent.Set();
+        
+        Thread.Sleep(100);
+        
+        Assert.That(task.IsCompleted, Is.True);
+    }
 }
