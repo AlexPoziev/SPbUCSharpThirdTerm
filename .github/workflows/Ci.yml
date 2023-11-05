@@ -15,8 +15,8 @@ jobs:
       - name: Run tests 
         run: $lnContent = Get-ChildItem -Recurse -Filter '*.sln'; foreach ($file in $lnContent) {dotnet test $file.FullName}
       
-  build-ubuntu:
-    runs-on: ubuntu-latest
+  build-macos:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
