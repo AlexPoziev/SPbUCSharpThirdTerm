@@ -6,12 +6,13 @@ public class MyTaskTest
 {
     private readonly int threadPoolSize = 5;
     private MyThreadPool threadPool = null!;
-    private readonly ManualResetEvent manualResetEvent = new(false);
+    private ManualResetEvent manualResetEvent = new(false);
 
     [SetUp]
     public void Initialization()
     {
         threadPool = new(threadPoolSize);
+        manualResetEvent = new(false);
     }
     
     [TearDown]
@@ -50,7 +51,6 @@ public class MyTaskTest
         Assert.That(threadPool.WorkingThreadsNumber, Is.EqualTo(threadPoolSize));
         
         manualResetEvent.Set();
-        manualResetEvent.Reset();
     }
     
     [Test]
@@ -96,8 +96,8 @@ public class MyTaskTest
     [Test]
     public void SubmitAndContinueWithFromMultipleThreadsShouldPerformExpectedResult()
     {
-        var expectedResult = 400;   
-        var threadsCount = 10;
+        const int expectedResult = 400;   
+        const int threadsCount = 10;
         var threads = new Thread[threadsCount];
         var test = new IMyTask<int>[threadPoolSize * threadsCount];
 
@@ -133,7 +133,5 @@ public class MyTaskTest
         var result = test.Sum(x => x.Result);
         
         Assert.That(result, Is.EqualTo(expectedResult));
-        
-        manualResetEvent.Reset();
     }
 }
