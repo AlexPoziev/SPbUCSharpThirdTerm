@@ -51,7 +51,6 @@ public class MyTaskTest
         Assert.That(threadPool.WorkingThreadsNumber, Is.EqualTo(threadPoolSize));
         
         manualResetEvent.Set();
-        Thread.Sleep(200);
     }
     
     [Test]
