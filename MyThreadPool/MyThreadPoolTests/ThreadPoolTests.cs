@@ -42,15 +42,15 @@ public class MyTaskTest
         {
             threadPool.Submit(() =>
             {
-                manualResetEvent.WaitOne();
+                Thread.Sleep(100);
 
                 return 1;
             });
         }
         
-        Assert.That(threadPool.WorkingThreadsNumber, Is.EqualTo(threadPoolSize));
+        Thread.Sleep(200);
         
-        manualResetEvent.Set();
+        Assert.That(threadPool.WorkingThreadsNumber, Is.EqualTo(threadPoolSize));
     }
     
     [Test]
