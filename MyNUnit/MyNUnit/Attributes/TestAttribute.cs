@@ -1,14 +1,15 @@
 namespace MyNUnit.Attributes;
 
+[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 public class TestAttribute : Attribute
 {
-    public TestAttribute(string? ignoreMessage = null, Exception? expected = null)
+    public TestAttribute(string? ignoreMessage = null, Type? expected = null)
     {
         IgnoreMessage = ignoreMessage;
         ExpectedException = expected;    
     }
     
-    public Exception? ExpectedException { get; private set; }
+    public Type? ExpectedException { get; private set; }
     
     public string? IgnoreMessage { get; private set; }
 }
