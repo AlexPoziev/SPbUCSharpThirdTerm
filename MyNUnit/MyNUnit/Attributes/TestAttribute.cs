@@ -9,6 +9,12 @@ public class TestAttribute : Attribute
         ExpectedException = expected;    
     }
     
+    public TestAttribute(Type expected)
+    {
+        IgnoreMessage = null;
+        ExpectedException = expected;    
+    }
+    
     public Type? ExpectedException { get; private set; }
     
     public string? IgnoreMessage { get; private set; }

@@ -6,7 +6,7 @@ public static class Assert
     {
         if (!condition)
         {
-            throw message is null ? new FailedAssertion() : new FailedAssertion(message);
+            throw message is null ? new FailedAssertionException() : new FailedAssertionException(message);
         }
     }
 }
