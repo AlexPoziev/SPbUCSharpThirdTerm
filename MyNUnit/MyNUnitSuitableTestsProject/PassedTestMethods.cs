@@ -13,7 +13,7 @@ public class PassedTestMethods
     [BeforeClass]
     public static void BeforeClass()
     {
-        ++beforeAndAfterClassInvokesAmount;
+        beforeAndAfterClassInvokesAmount += 10;
     }
 
     [AfterClass]
@@ -25,7 +25,7 @@ public class PassedTestMethods
     [Before]
     public void Before()
     {
-        ++beforeAndAfterInvokesAmount;
+        beforeAndAfterInvokesAmount += 10;
     }
     
     [After]

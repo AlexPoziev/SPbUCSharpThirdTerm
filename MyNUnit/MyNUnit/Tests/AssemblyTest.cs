@@ -10,11 +10,16 @@ public class AssemblyTest
 
     private readonly List<ClassTest> classTests;
 
-    public AssemblyTest(string assemblyPath)
+    public AssemblyTest(string assemblyPath) : this(Assembly.LoadFrom(Path.GetFileName(assemblyPath)))
     {
-        name = Path.GetFileName(assemblyPath);
+        
+    }
 
-        classTests = Assembly.LoadFrom(assemblyPath).ExportedTypes
+    public AssemblyTest(Assembly assembly)
+    {
+        name = assembly.GetName().Name!;
+        
+        classTests = assembly.ExportedTypes
             .Where(type => type.IsClass)
             .Select(type => new ClassTest(type.Name, type.GetTypeInfo(), name)).ToList();
     }

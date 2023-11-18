@@ -47,7 +47,7 @@ public class Test
             return new IgnoredTestResult(testName, ignoreReason);
         }
 
-        InvokeMethods(afterTestsMethodInfo);
+        InvokeMethods(beforeTestsMethodInfo);
         
         var stopWatch = new Stopwatch();
         stopWatch.Start();
