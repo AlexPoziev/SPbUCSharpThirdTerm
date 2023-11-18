@@ -1,5 +1,5 @@
 using System.Reflection;
-using MyNUnit.Tests.TestResults;
+using MyNUnit.Tests.TestsResult;
 
 namespace MyNUnit;
 

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using MyNUnit.Tests;
-using MyNUnit.Tests.TestResults;
+using MyNUnit.Tests.TestsResult;
 
 namespace MyNUnit;
 

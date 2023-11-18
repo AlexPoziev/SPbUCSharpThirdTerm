@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection;
-using MyNUnit.TestResults;
-using MyNUnit.Tests.TestResults;
+using MyNUnit.Tests.TestsResult;
 
 namespace MyNUnit.Tests;
 

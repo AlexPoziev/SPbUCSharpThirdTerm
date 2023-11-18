@@ -1,6 +1,5 @@
 ﻿using MyNUnit.Assert;
 using MyNUnit.Attributes;
-using MyNUnit.Tests.TestResults;
 
 namespace ProjectForTest;
 

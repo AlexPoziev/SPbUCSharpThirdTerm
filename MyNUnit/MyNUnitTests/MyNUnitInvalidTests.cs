@@ -1,6 +1,6 @@
 using System.Reflection;
 using MyNUnit.Tests;
-using MyNUnit.Tests.TestResults;
+using MyNUnit.Tests.TestsResult;
 
 namespace MyNUnitTests;
 

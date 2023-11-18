@@ -3,7 +3,7 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.Results;
 using MyNUnit.Attributes;
-using MyNUnit.Tests.TestResults;
+using MyNUnit.Tests.TestsResult;
 using MyNUnit.Validators;
 
 namespace MyNUnit.Tests;

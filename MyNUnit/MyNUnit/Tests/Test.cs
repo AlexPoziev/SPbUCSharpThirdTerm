@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Reflection;
 using MyNUnit.Assert;
 using MyNUnit.Attributes;
-using MyNUnit.Tests.TestResults;
+using MyNUnit.Tests.TestsResult;
 
 namespace MyNUnit.Tests;
 
