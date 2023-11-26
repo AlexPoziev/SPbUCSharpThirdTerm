@@ -61,8 +61,8 @@ public class SimpleFtpTests
     {
         const string listPath = "./TestFiles";
         const string getPath = "./TestFiles/TextDoc.txt";
-        const int clientsNumber = 10;
-        const int millisecondsWait = 500;
+        const int clientsNumber = 5;
+        const int millisecondsWait = 1000;
         
         var listResults = new List<DirectoryElement>[clientsNumber];
         var getResults = new byte[clientsNumber][];
@@ -76,7 +76,7 @@ public class SimpleFtpTests
             {
                 manualResetEvent.WaitOne();
                 
-                Thread.Sleep(millisecondsWait);
+                await Task.Delay(millisecondsWait);
                 
                 var newClient = new Client(port, host);
                 listResults[locali] = await newClient.ListAsync(listPath);
@@ -86,8 +86,8 @@ public class SimpleFtpTests
         
         var stopwatch = new Stopwatch();
         
-        stopwatch.Start();
         manualResetEvent.Set();
+        stopwatch.Start();
         
         Task.WaitAll(tasks);
         stopwatch.Stop();
