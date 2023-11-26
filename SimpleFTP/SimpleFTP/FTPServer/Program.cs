@@ -2,4 +2,12 @@
 
 var server = new Server(7777);
 
-await server.Start();
+var taskServer = Task.Run(async () => await server.Start());
+
+while (Console.ReadKey().Key != ConsoleKey.Escape)
+{
+}
+
+server.Stop();
+
+await taskServer;

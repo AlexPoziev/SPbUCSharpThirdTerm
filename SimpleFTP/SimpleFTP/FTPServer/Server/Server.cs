@@ -2,7 +2,6 @@ namespace SimpleFTP.Server;
 
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 /// <summary>
 /// Server which supports SimpleFTP protocol.
@@ -68,42 +67,33 @@ public class Server
 
     private Task HandleRequests(TcpClient client, CancellationToken token)
     {
-        return Task.Run(
-            async () =>
+        return Task.Run(async () =>
         {
-            try
+            await using var stream = client.GetStream();
+
+            using var streamReader = new StreamReader(stream);
+            
+            while (!token.IsCancellationRequested)
             {
-                await using var stream = client.GetStream();
+                var request = (await streamReader.ReadLineAsync(token))?.Split() ?? throw new InvalidDataException();
 
-                var buffer = new byte[client.ReceiveBufferSize];
-
-                while (!token.IsCancellationRequested)
+                switch (request[0])
                 {
-                    var bytesRead = await stream.ReadAsync(buffer, token);
-
-                    var request = Encoding.UTF8.GetString(buffer, 0, bytesRead).Split();
-
-                    switch (request[0])
-                    {
-                        case "1":
-                            await Service.ListAsync(request[1], stream);
-                            break;
-                        case "2":
-                            await Service.GetFileAsync(request[1], stream);
-                            break;
-                        default:
-                            await Service.SendResponse("Operation not found", stream);
-                            break;
-                    }
+                    case "1":
+                        await Service.ListAsync(request[1], stream);
+                        break;
+                    case "2":
+                        await Service.GetFileAsync(request[1], stream);
+                        break;
+                    default:
+                        await Service.SendResponse("Operation not found", stream);
+                        break;
                 }
             }
-            catch
-            {
-                Disconnect(client);
-                Console.WriteLine("User Disconnected.");
-            }
-        },
-            token);
+            
+            Disconnect(client);
+            Console.WriteLine("User Disconnected.");
+        }, token);
     }
 
     private void Disconnect(TcpClient client)
