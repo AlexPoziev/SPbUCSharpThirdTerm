@@ -47,9 +47,9 @@ public class Client
     /// Method to get file content by it's path.
     /// </summary>
     /// <param name="path">path to file.</param>
-    /// <param name="outStreamer">stream for writing result to.</param>
+    /// <param name="outStream">stream for writing result to.</param>
     /// <returns>File content.</returns>
-    public async Task<byte[]> GetAsync(string path, Stream outStream)
+    public async Task GetAsync(string path, Stream outStream)
     {
         using var client = new TcpClient();
         await client.ConnectAsync(hostName, port);
@@ -63,7 +63,7 @@ public class Client
         await writer.WriteAsync(request);
         await writer.FlushAsync();
 
-        return await HandleGetResponse(stream, outStream);
+        await HandleGetResponse(stream, outStream);
     }
     
     private static async Task<List<DirectoryElement>> HandleListResponse(NetworkStream stream)
@@ -108,7 +108,7 @@ public class Client
         return result.OrderBy(element => element.ElementName).ToList();
     }
 
-    private static async Task<byte[]> HandleGetResponse(NetworkStream stream, Stream outStream)
+    private static async Task HandleGetResponse(NetworkStream stream, Stream outStream)
     {
         const int bodyBufferSize = 8192;
         
@@ -138,7 +138,5 @@ public class Client
             downloadedAmount += charsRead;
             await outStream.WriteAsync(bodyBuffer.Take(charsRead).ToArray());
         }
-
-        return Array.Empty<byte>();
     }
 }
