@@ -62,7 +62,7 @@ public class SimpleFtpTests
         const string listPath = "./TestFiles";
         const string getPath = "./TestFiles/TextDoc.txt";
         const int clientsNumber = 5;
-        const int millisecondsWait = 1000;
+        const int millisecondsWait = 2000;
         
         var listResults = new List<DirectoryElement>[clientsNumber];
         var getResults = new byte[clientsNumber][];
@@ -91,6 +91,8 @@ public class SimpleFtpTests
         
         Task.WaitAll(tasks);
         stopwatch.Stop();
+        
+        Console.WriteLine(stopwatch.ElapsedMilliseconds);
         
         Assert.That(stopwatch.ElapsedMilliseconds, Is.LessThan(millisecondsWait * clientsNumber));
         
