@@ -92,8 +92,6 @@ public class SimpleFtpTests
         Task.WaitAll(tasks);
         stopwatch.Stop();
         
-        Console.WriteLine(stopwatch.ElapsedMilliseconds);
-        
         Assert.That(stopwatch.ElapsedMilliseconds, Is.LessThan(millisecondsWait * clientsNumber));
         
         for (var i = 1; i < clientsNumber; ++i)
