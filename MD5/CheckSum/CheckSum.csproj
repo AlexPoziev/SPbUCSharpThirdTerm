@@ -8,4 +8,13 @@
         <RootNamespace>MD5</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Update="TestDirectory\EmptyDirectory\empty.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestDirectory\TestFile1.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
