@@ -1,21 +1,34 @@
+using Microsoft.EntityFrameworkCore;
 using MyNUnitWeb.Models;
 
 namespace MyNUnitWeb.Repositories;
 
-public class FileTestsRepository : IFileTestsRepository
+public class FileTestsRepository(DbContext fileTestContext) : IFileTestsRepository
 {
-    public Task<FileTestResult[]> GetAllAsync()
+    public async Task<FileTestResult[]> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await fileTestContext.Set<FileTestResult>()
+            .AsNoTracking()
+            .Include(f => f.ClassTestResults)
+            .ThenInclude(c => c.MethodTestResults)
+            .ToArrayAsync();
     }
 
-    public Task<long> GetAsync(long id)
+    public async Task<FileTestResult> GetAsync(long id)
     {
-        throw new NotImplementedException();
+        return await fileTestContext.Set<FileTestResult>()
+            .AsNoTracking()
+            .Where(f => f.Id == id)
+            .Include(f => f.ClassTestResults)
+            .ThenInclude(c => c.MethodTestResults)
+            .FirstOrDefaultAsync() ?? new FileTestResult();
     }
 
-    public Task<long> AddAsync(FileTestResult result)
+    public async Task<long> AddAsync(FileTestResult result)
     {
-        throw new NotImplementedException();
+        await fileTestContext.AddAsync(result);
+        await fileTestContext.SaveChangesAsync();
+
+        return result.Id;
     }
 }
