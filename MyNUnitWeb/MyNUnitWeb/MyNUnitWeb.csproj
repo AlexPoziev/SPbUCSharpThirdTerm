@@ -13,10 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ViewModels\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\MyNUnit\MyNUnit.csproj" />
     </ItemGroup>
 

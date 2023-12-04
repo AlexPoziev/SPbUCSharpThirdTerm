@@ -9,5 +9,7 @@ public class ClassTestResult
 
     public string Name { get; set; } = null!;
 
+    public string? ValidationErrors { get; set; } = null!;
+    
     public List<MethodTestResult> MethodTestResults { get; set; } = null!;
 }
