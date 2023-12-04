@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MyNUnitWeb.Controllers;
 using MyNUnitWeb.Models;
 using MyNUnitWeb.Repositories;
 using MyNUnitWeb.Services;

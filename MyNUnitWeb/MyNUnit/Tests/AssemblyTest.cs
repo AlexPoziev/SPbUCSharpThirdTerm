@@ -32,4 +32,6 @@ public class AssemblyTest
         
         return new AssemblyTestResult(result.ToList(), name, result.Sum(r => r.TestDuration));
     }
+
+    public static AssemblyTestResult RunTestByAssembly(Assembly assembly) => new AssemblyTest(assembly).Run();
 }

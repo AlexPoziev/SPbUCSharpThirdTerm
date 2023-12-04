@@ -13,9 +13,11 @@ public class MethodTestResult
     
     public bool IsPassed { get; set; }
     
+    public bool IsIgnored { get; set; }
+    
     public string? FailReasons { get; set; }
     
-    public string? IgnoreReason { get; set; }
+    public string? IgnoredReason { get; set; }
     
-    public long TestTime { get; set; }
+    public long TestDuration { get; set; }
 }

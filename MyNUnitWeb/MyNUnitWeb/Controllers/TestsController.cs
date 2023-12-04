@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.Loader;
 using Microsoft.AspNetCore.Mvc;
 using MyNUnitWeb.Services;
 
@@ -17,7 +19,10 @@ public class TestsController : ControllerBase
     [HttpPost("test")]
     public async Task<IActionResult> UploadTests(IFormFileCollection files)
     {
-        throw new NotImplementedException();
+        var tests = await _testsService
+            .TestFilesAsync(files.Select(f => AssemblyLoadContext.Default.LoadFromStream(f.OpenReadStream())).ToArray());
+
+        return Ok();
     }
 
     [HttpGet("testHistory")]

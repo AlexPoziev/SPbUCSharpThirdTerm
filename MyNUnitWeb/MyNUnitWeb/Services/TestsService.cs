@@ -1,4 +1,7 @@
 using System.Reflection;
+using MyNUnit.Tests;
+using MyNUnit.Tests.TestsResult;
+using MyNUnitWeb.Domain;
 using MyNUnitWeb.Models;
 using MyNUnitWeb.Repositories;
 
@@ -15,18 +18,35 @@ public class TestsService : ITestsService
         _dbContext = dbContext;
     }
 
-    public Task<FileTestResult> TestFileAsync(Assembly assembly)
+    public async Task<FileTestResult> TestFileAsync(Assembly assembly)
     {
-        throw new NotImplementedException();
+        var testResult = AssemblyTest.RunTestByAssembly(assembly);
+        var fileTestResult = testResult.ToFileTestResult(); 
+        
+        var id = await _testRepository.AddAsync(fileTestResult);
+        fileTestResult.Id = id;
+
+        return fileTestResult;
     }
 
-    public Task<FileTestResult[]> TestFilesAsync(Assembly[] assemblies)
+    public async Task<FileTestResult[]> TestFilesAsync(Assembly[] assemblies)
     {
-        throw new NotImplementedException();
+        var testResults = assemblies.Select(AssemblyTest.RunTestByAssembly);
+        var fileTestResults = testResults.Select(result => result.ToFileTestResult()).ToArray();
+
+        var ids = await _testRepository.AddAllAsync(fileTestResults);
+        for (var i = 0; i < ids.Length; i++)
+        {
+            fileTestResults[i].Id = ids[i];
+        }
+
+        return fileTestResults;
     }
 
-    public Task<FileTestResult[]> GetAllTestsAsync()
+    public async Task<FileTestResult[]> GetAllTestsAsync()
     {
-        throw new NotImplementedException();
+        var allTests = await _testRepository.GetAllAsync();
+
+        return allTests;
     }
 }

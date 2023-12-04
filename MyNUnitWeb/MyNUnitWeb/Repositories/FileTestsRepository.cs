@@ -3,7 +3,7 @@ using MyNUnitWeb.Models;
 
 namespace MyNUnitWeb.Repositories;
 
-public class FileTestsRepository(DbContext fileTestContext) : IFileTestsRepository
+public class FileTestsRepository(FileTestContext fileTestContext) : IFileTestsRepository
 {
     public async Task<FileTestResult[]> GetAllAsync()
     {
@@ -30,5 +30,13 @@ public class FileTestsRepository(DbContext fileTestContext) : IFileTestsReposito
         await fileTestContext.SaveChangesAsync();
 
         return result.Id;
+    }
+
+    public async Task<long[]> AddAllAsync(FileTestResult[] results)
+    {
+        await fileTestContext.Set<FileTestResult>().AddRangeAsync(results);
+        await fileTestContext.SaveChangesAsync();
+
+        return results.Select(result => result.Id).ToArray();
     }
 }
