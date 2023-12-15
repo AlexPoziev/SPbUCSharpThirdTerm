@@ -22,8 +22,6 @@ public class Test
     
     private readonly string testName;
 
-    private bool isStarted;
-
     public Test(object classInstance, MethodInfo testMethodInfo, List<MethodInfo> beforeTestsMethodInfo, List<MethodInfo> afterTestsMethodInfo)
     {
         this.classInstance = classInstance;
@@ -40,8 +38,6 @@ public class Test
 
     public TestResult Run()
     {
-        isStarted = true;
-        
         if (ignoreReason is not null)
         {
             return new IgnoredTestResult(testName, ignoreReason);

@@ -8,6 +8,11 @@ public static class TestRunner
 {
     public static List<AssemblyTestResult> RunTests(string path)
     {
+        if (!Directory.Exists(path))
+        {
+            throw new DirectoryNotFoundException();
+        }
+        
         var result = new ConcurrentBag<AssemblyTestResult>();
 
         var assemblies = Directory.EnumerateFiles(path, "*.dll")

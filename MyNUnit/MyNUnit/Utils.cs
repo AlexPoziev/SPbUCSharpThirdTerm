@@ -65,14 +65,10 @@ public static class Utils
             case FailedTestResult failedResult:
                 await writer.WriteLineAsync("\t\tTest result: Failed");
 
-                if (failedResult.IsAssertionFailed)
-                {
-                    await writer.WriteLineAsync("\t\tReason: Assertion Failed");
-                }
-                else
-                {
-                    await writer.WriteLineAsync($"\t\tReason: was expected {failedResult.ExpectedException?.Name} exception but was {failedResult.ActualException?.Name}");
-                }
+                await writer.WriteLineAsync(failedResult.IsAssertionFailed ?
+                    "\t\tReason: Assertion Failed" :
+                    $"\t\tReason: was expected {failedResult.ExpectedException?.Name} exception but was {failedResult.ActualException?.Name}"
+                );
 
                 break;
             

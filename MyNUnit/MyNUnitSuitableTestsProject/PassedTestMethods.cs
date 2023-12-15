@@ -5,32 +5,32 @@ namespace ProjectForTest;
 
 public class PassedTestMethods
 {
-    public static int beforeAndAfterClassInvokesAmount = 0;
+    public static volatile int beforeAndAfterClassInvokesAmount;
 
-    public static int beforeAndAfterInvokesAmount = 0;
+    public static volatile int beforeAndAfterInvokesAmount;
     
     [BeforeClass]
     public static void BeforeClass()
     {
-        beforeAndAfterClassInvokesAmount += 10;
+        Interlocked.Add(ref beforeAndAfterClassInvokesAmount, 10);
     }
 
     [AfterClass]
     public static void AfterClass()
     {
-        ++beforeAndAfterClassInvokesAmount;
+        Interlocked.Increment(ref beforeAndAfterClassInvokesAmount);
     }
 
     [Before]
     public void Before()
     {
-        beforeAndAfterInvokesAmount += 10;
+        Interlocked.Add(ref beforeAndAfterInvokesAmount, 10);
     }
     
     [After]
     public void After()
     {
-        ++beforeAndAfterInvokesAmount;
+        Interlocked.Increment(ref beforeAndAfterInvokesAmount);
     }
     
     [Test(typeof(InvalidDataException))]

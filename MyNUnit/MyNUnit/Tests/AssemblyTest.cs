@@ -17,6 +17,8 @@ public class AssemblyTest
 
     public AssemblyTest(Assembly assembly)
     {
+        ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+        
         name = assembly.GetName().Name!;
         
         classTests = assembly.ExportedTypes

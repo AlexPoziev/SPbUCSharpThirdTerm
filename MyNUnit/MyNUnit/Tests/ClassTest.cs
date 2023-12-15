@@ -16,7 +16,7 @@ public class ClassTest
 
     private readonly List<Test> testMethods = new();
 
-    private readonly List<MethodInfo> afterClassMethods ;
+    private readonly List<MethodInfo> afterClassMethods;
 
     private readonly List<ValidationFailure> errors = new();
 
@@ -48,10 +48,13 @@ public class ClassTest
         {
             Parallel.ForEach(beforeClassMethods, method =>
                 method.Invoke(null, null));
-
-            var classInstance = Activator.CreateInstance(classInfo) ?? throw new ArgumentNullException(nameof(classInfo));
             
-            testMethods = tests.Select(method => new Test(classInstance, method, beforeMethods, afterMethods)).ToList();
+            testMethods = tests.Select(method =>
+            {
+                var classInstance = Activator.CreateInstance(classInfo) ?? throw new ArgumentNullException(nameof(classInfo));
+                
+                return new Test(classInstance, method, beforeMethods, afterMethods);
+            }).ToList();
         }
     }
 
