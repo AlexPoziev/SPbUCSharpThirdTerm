@@ -13,10 +13,14 @@
  */
 
 import * as url from "url";
-import * as isomorphicFetch from "isomorphic-fetch";
+import * as portableFetch from "portable-fetch";
 import { Configuration } from "./configuration";
 
-const BASE_PATH = "/5".replace(/\/+$/, "");
+if (typeof URLSearchParams === 'undefined'){
+    URLSearchParams = require('url').URLSearchParams;
+}
+
+const BASE_PATH = "/".replace(/\/+$/, "");
 
 /**
  *
@@ -56,7 +60,7 @@ export interface FetchArgs {
 export class BaseAPI {
     protected configuration: Configuration;
 
-    constructor(configuration?: Configuration, protected basePath: string = BASE_PATH, protected fetch: FetchAPI = isomorphicFetch) {
+    constructor(configuration?: Configuration, protected basePath: string = BASE_PATH, protected fetch: FetchAPI = portableFetch) {
         if (configuration) {
             this.configuration = configuration;
             this.basePath = configuration.basePath || this.basePath;
@@ -302,7 +306,7 @@ export const TestsApiFetchParamCreator = function (configuration?: Configuration
             const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-            const localVarFormParams = new url.URLSearchParams();
+            const localVarFormParams = new URLSearchParams();
 
             if (files) {
                 files.forEach((element) => {
@@ -339,7 +343,7 @@ export const TestsApiFp = function(configuration?: Configuration) {
          */
         apiTestsTestHistoryGet(options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<AllFileTestResultsViewModel> {
             const localVarFetchArgs = TestsApiFetchParamCreator(configuration).apiTestsTestHistoryGet(options);
-            return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
+            return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
                 return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                     if (response.status >= 200 && response.status < 300) {
                         return response.json();
@@ -357,7 +361,7 @@ export const TestsApiFp = function(configuration?: Configuration) {
          */
         apiTestsTestPost(files?: Array<Blob>, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<FileTestResultViewModel>> {
             const localVarFetchArgs = TestsApiFetchParamCreator(configuration).apiTestsTestPost(files, options);
-            return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
+            return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
                 return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                     if (response.status >= 200 && response.status < 300) {
                         return response.json();
