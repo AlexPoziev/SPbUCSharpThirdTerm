@@ -11,6 +11,8 @@ export const TestsHistory: React.FC = () => {
     const [testHistory, setTestHistory] = useState<ITestsHistoryState>({
         testResults: undefined,
     })
+
+    useEffect(() => {getTestHistory()}, [])
     
     const getTestHistory = async () => {
         const testHistory = await ApiSingleton.testsApi.apiTestsTestHistoryGet()
@@ -20,7 +22,7 @@ export const TestsHistory: React.FC = () => {
     
     return <div>
         <TestsResult
-            results={testHistory.testResults!}
+            results={testHistory.testResults}
         />
     </div>
 };

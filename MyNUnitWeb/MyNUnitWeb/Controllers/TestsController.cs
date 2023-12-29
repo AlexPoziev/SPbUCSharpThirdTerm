@@ -22,10 +22,21 @@ public class TestsController : ControllerBase
 
     [HttpPost("test")]
     [ProducesResponseType(typeof(FileTestResultViewModel[]), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> UploadTests(IFormFileCollection files)
+    public async Task<IActionResult> UploadTests(List<IFormFile> files)
     {
         var tests = await _testsService
             .TestFilesAsync(files.Select(f => AssemblyLoadContext.Default.LoadFromStream(f.OpenReadStream())).ToArray());
+
+        var testViewModels = tests.Select(t => t.ToViewModel()).ToArray();
+        
+        return Ok(testViewModels);
+    }
+    
+    [HttpPost("testBytes")]
+    public async Task<IActionResult> UploadByteTests(List<byte[]> files)
+    {
+        var tests = await _testsService
+            .TestFilesAsync(files.Select(Assembly.Load).ToArray());
 
         var testViewModels = tests.Select(t => t.ToViewModel()).ToArray();
         

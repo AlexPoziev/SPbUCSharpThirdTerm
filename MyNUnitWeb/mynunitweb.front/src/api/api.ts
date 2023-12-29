@@ -20,6 +20,7 @@ if (typeof URLSearchParams === 'undefined'){
     URLSearchParams = require('url').URLSearchParams;
 }
 
+
 const BASE_PATH = "/".replace(/\/+$/, "");
 
 /**
@@ -274,6 +275,36 @@ export const TestsApiFetchParamCreator = function (configuration?: Configuration
     return {
         /**
          * 
+         * @param {Array<string>} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTestsTestBytesPost(body?: Array<string>, options: any = {}): FetchArgs {
+            console.log(body)
+            const localVarPath = `/api/Tests/testBytes`;
+            const localVarUrlObj = url.parse(localVarPath, true);
+            const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+            const needsSerialization = (<any>"Array&lt;string&gt;" !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.body =  body
+            
+            console.log(localVarRequestOptions.body)
+
+            return {
+                url: url.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -294,39 +325,7 @@ export const TestsApiFetchParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @param {Array<Blob>} [files] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiTestsTestPost(files?: Array<Blob>, options: any = {}): FetchArgs {
-            const localVarPath = `/api/Tests/test`;
-            const localVarUrlObj = url.parse(localVarPath, true);
-            const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-            const localVarFormParams = new URLSearchParams();
-
-            if (files) {
-                files.forEach((element) => {
-                    localVarFormParams.append('files', element as any);
-                })
-            }
-
-            localVarHeaderParameter['Content-Type'] = 'application/x-www-form-urlencoded';
-
-            localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
-            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-            delete localVarUrlObj.search;
-            localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
-            localVarRequestOptions.body = localVarFormParams.toString();
-
-            return {
-                url: url.format(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
+       
     }
 };
 
@@ -336,6 +335,25 @@ export const TestsApiFetchParamCreator = function (configuration?: Configuration
  */
 export const TestsApiFp = function(configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {Array<string>} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTestsTestBytesPost(body?: Array<string>, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<FileTestResultViewModel>> {
+            console.log(body)
+            const localVarFetchArgs = TestsApiFetchParamCreator(configuration).apiTestsTestBytesPost(body, options);
+            return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
+                return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                    if (response.status >= 200 && response.status < 300) {
+                        return response.json();
+                    } else {
+                        throw response;
+                    }
+                });
+            };
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -359,18 +377,6 @@ export const TestsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTestsTestPost(files?: Array<Blob>, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<FileTestResultViewModel>> {
-            const localVarFetchArgs = TestsApiFetchParamCreator(configuration).apiTestsTestPost(files, options);
-            return (fetch: FetchAPI = portableFetch, basePath: string = BASE_PATH) => {
-                return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
-                    if (response.status >= 200 && response.status < 300) {
-                        return response.json();
-                    } else {
-                        throw response;
-                    }
-                });
-            };
-        },
     }
 };
 
@@ -380,6 +386,15 @@ export const TestsApiFp = function(configuration?: Configuration) {
  */
 export const TestsApiFactory = function (configuration?: Configuration, fetch?: FetchAPI, basePath?: string) {
     return {
+        /**
+         * 
+         * @param {Array<string>} [body] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTestsTestBytesPost(body?: Array<string>, options?: any) {
+            return TestsApiFp(configuration).apiTestsTestBytesPost(body, options)(fetch, basePath);
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -394,9 +409,6 @@ export const TestsApiFactory = function (configuration?: Configuration, fetch?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTestsTestPost(files?: Array<Blob>, options?: any) {
-            return TestsApiFp(configuration).apiTestsTestPost(files, options)(fetch, basePath);
-        },
     };
 };
 
@@ -407,6 +419,18 @@ export const TestsApiFactory = function (configuration?: Configuration, fetch?: 
  * @extends {BaseAPI}
  */
 export class TestsApi extends BaseAPI {
+    /**
+     * 
+     * @param {Array<string>} [body] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TestsApi
+     */
+    public apiTestsTestBytesPost(body?: Array<string>, options?: any) {
+        console.log(body)
+        return TestsApiFp(this.configuration).apiTestsTestBytesPost(body, options)(this.fetch, this.basePath);
+    }
+
     /**
      * 
      * @param {*} [options] Override http request option.
@@ -424,8 +448,4 @@ export class TestsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TestsApi
      */
-    public apiTestsTestPost(files?: Array<Blob>, options?: any) {
-        return TestsApiFp(this.configuration).apiTestsTestPost(files, options)(this.fetch, this.basePath);
-    }
-
 }
