@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyNUnitWeb", "MyNUnitWeb\MyNUnitWeb.csproj", "{03A5D99C-967B-422D-80A4-548788652011}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyNUnit", "MyNUnit\MyNUnit.csproj", "{D1E54C0C-C3DC-481B-A556-DE76D21B086A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03A5D99C-967B-422D-80A4-548788652011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A5D99C-967B-422D-80A4-548788652011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A5D99C-967B-422D-80A4-548788652011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A5D99C-967B-422D-80A4-548788652011}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1E54C0C-C3DC-481B-A556-DE76D21B086A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1E54C0C-C3DC-481B-A556-DE76D21B086A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1E54C0C-C3DC-481B-A556-DE76D21B086A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1E54C0C-C3DC-481B-A556-DE76D21B086A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
